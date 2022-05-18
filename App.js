@@ -1,20 +1,44 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  StatusBar,
+  Text,
+} from "react-native";
+import React, { useState, useEffect } from "react";
+import { getNewsApi } from "./src/api/news";
+import New from "./src/components/New";
 
-export default function App() {
+const App = () => {
+  const [news, setNews] = useState(null);
+
+  useEffect(() => {
+    getNewsApi().then((response) => setNews(response.data));
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView>
+      <StatusBar />
+      <Text style={styles.title}>Últimas noticias</Text>
+      <ScrollView style={styles.scrollView}>
+        <Text>Lista de noticias</Text>
+        {news &&
+          news.map((item) => <New key={item.id} data={item.attributes} />)}
+      </ScrollView>
+    </SafeAreaView>
   );
-}
+};
+
+export default App;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  title: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 25,
+    paddingVertical: 10,
+  },
+  scrollView: {
+    height: "100%",
   },
 });
